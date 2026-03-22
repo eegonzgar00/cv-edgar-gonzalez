@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edgar González — Liferay & Full Stack Java</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+
+  /* ── TOKENS ─────────────────────────────────────── */
+  :root {
+    --bg:    #080808;
+    --s1:    #0D0D0D;
+    --s2:    #131313;
+    --s3:    #181818;
+    --br:    #1F1F1F;
+    --br2:   #2A2A2A;
+    --tx:    #E4E4E4;
+    --mid:   #7A7A7A;
+    --dim:   #3A3A3A;
+    --g:     #00E676;
+    --g2:    #00C85A;
+    --g3:    #009944;
+    --g-bg:  rgba(0,230,118,.06);
+    --g-bd:  rgba(0,230,118,.18);
+    --g-glow:0 0 24px rgba(0,230,118,.28);
+    --t:     .25s;
+    --ease:  cubic-bezier(.4,0,.2,1);
+    --r:     10px;
+    --r-lg:  16px;
+  }
+
+  /* ── RESET ──────────────────────────────────────── */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'DM Sans',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--tx);
+    font-size:15px;
+    line-height:1.65;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:rgba(0,230,118,.25);color:#fff}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--br2);border-radius:4px}
+
+  /* ── REVEAL ─────────────────────────────────────── */
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  .d1{transition-delay:.07s}
+  .d2{transition-delay:.14s}
+  .d3{transition-delay:.21s}
+  .d4{transition-delay:.28s}
+
+  /* ── LANG TOGGLE ────────────────────────────────── */
+  #lt{
+    position:fixed;top:22px;right:24px;z-index:9999;
+    display:flex;align-items:center;gap:7px;
+    background:var(--s3);
+    border:1px solid var(--br2);
+    border-radius:6px;
+    padding:7px 14px;
+    font-family:'DM Sans',sans-serif;
+    font-size:11px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--mid);
+    cursor:pointer;
+    transition:all var(--t) var(--ease);
+  }
+  #lt:hover{border-color:var(--g);color:var(--g);background:var(--g-bg)}
+  #lt::before{
+    content:'';width:6px;height:6px;border-radius:50%;
+    background:var(--g);flex-shrink:0;
+    box-shadow:0 0 6px var(--g);
+  }
+
+  /* ── NAV ────────────────────────────────────────── */
+  #nav{
+    position:fixed;bottom:24px;left:50%;
+    transform:translateX(-50%);
+    z-index:9998;
+    display:flex;align-items:center;gap:2px;
+    background:rgba(13,13,13,.95);
+    border:1px solid var(--br2);
+    border-radius:10px;
+    padding:5px 8px;
+    box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(0,230,118,.04);
+  }
+  #nav a{
+    font-size:11px;font-weight:500;letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:7px 14px;border-radius:6px;
+    color:var(--dim);
+    transition:all var(--t) var(--ease);
+  }
+  #nav a:hover{color:var(--tx);background:var(--s3)}
+  #nav a.on{background:var(--g-bg);color:var(--g);border:1px solid var(--g-bd)}
+
+  /* ── LAYOUT ─────────────────────────────────────── */
+  section{padding:96px 48px;border-bottom:1px solid var(--br)}
+  .wrap{max-width:1080px;margin:0 auto}
+
+  .eyebrow{
+    font-size:10px;font-weight:600;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--g2);
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:12px;
+  }
+  .eyebrow::before{
+    content:'';width:18px;height:1px;
+    background:var(--g2);flex-shrink:0;
+  }
+  h2.sh{
+    font-family:'Syne',sans-serif;
+    font-size:clamp(2rem,4vw,3rem);
+    font-weight:800;line-height:1.05;
+    letter-spacing:-.02em;
+    color:var(--tx);margin-bottom:52px;
+  }
+
+  /* ═══════════════════════════════════════
+     HERO
+  ═══════════════════════════════════════ */
+  #hero{
+    min-height:100vh;
+    background:var(--bg);
+    display:flex;flex-direction:column;
+    justify-content:center;
+    padding:100px 48px 120px;
+    position:relative;overflow:hidden;
+    border-bottom:1px solid var(--br);
+  }
+
+  /* ambient green glow */
+  #hero::before{
+    content:'';
+    position:absolute;
+    width:700px;height:700px;
+    border-radius:50%;
+    bottom:-200px;left:-150px;
+    background:radial-gradient(circle,rgba(0,230,118,.07) 0%,transparent 65%);
+    pointer-events:none;
+  }
+  #hero::after{
+    content:'';
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(0,230,118,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,230,118,.025) 1px,transparent 1px);
+    background-size:72px 72px;
+    pointer-events:none;
+  }
+
+  .hero-inner{position:relative;z-index:1;max-width:1080px;width:100%}
+
+  /* status */
+  .h-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--g-bg);
+    border:1px solid var(--g-bd);
+    border-radius:6px;
+    padding:6px 14px;
+    font-size:10.5px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--g);
+    margin-bottom:36px;
+  }
+  .h-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--g);
+    box-shadow:0 0 8px var(--g);
+    animation:gpulse 2s ease-in-out infinite;
+  }
+  @keyframes gpulse{0%,100%{box-shadow:0 0 8px var(--g)}50%{box-shadow:0 0 16px var(--g),0 0 30px rgba(0,230,118,.2)}}
+
+  /* name */
+  #hero h1{
+    font-family:'Syne',sans-serif;
+    font-size:clamp(4.5rem,12vw,10rem);
+    font-weight:800;
+    line-height:.9;
+    letter-spacing:-.04em;
+    color:var(--tx);
+    margin-bottom:28px;
+  }
+  #hero h1 .ghost{
+    display:block;
+    color:transparent;
+    -webkit-text-stroke:1.5px var(--br2);
+    transition:-webkit-text-stroke-color var(--t) var(--ease);
+  }
+  #hero:hover h1 .ghost{-webkit-text-stroke-color:var(--dim)}
+  .cursor{
+    display:inline-block;
+    width:4px;height:.82em;
+    background:var(--g);
+    margin-left:6px;
+    vertical-align:text-bottom;
+    box-shadow:0 0 10px var(--g);
+    animation:blink .75s steps(2) infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+  /* role + location */
+  .h-role{
+    font-size:clamp(1rem,1.8vw,1.2rem);
+    font-weight:300;color:var(--mid);
+    margin-bottom:6px;
+  }
+  .h-loc{
+    font-size:12.5px;color:var(--dim);
+    display:flex;align-items:center;gap:5px;
+    margin-bottom:36px;
+  }
+  .h-loc svg{width:10px;height:10px;fill:currentColor}
+
+  /* tech pills */
+  .h-stack{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:44px}
+  .h-pill{
+    font-size:11px;font-weight:500;letter-spacing:.04em;
+    padding:5px 13px;border-radius:6px;
+    background:var(--s2);
+    border:1px solid var(--br2);
+    color:var(--mid);
+    transition:all var(--t) var(--ease);
+  }
+  .h-pill:hover{border-color:var(--g-bd);color:var(--g);background:var(--g-bg)}
+
+  /* CTA */
+  .h-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:13px 28px;border-radius:8px;
+    font-family:'DM Sans',sans-serif;
+    font-size:13.5px;font-weight:600;
+    border:none;cursor:pointer;
+    transition:all var(--t) var(--ease);
+    text-decoration:none;letter-spacing:.01em;
+  }
+  .btn-g{
+    background:var(--g);color:#000;
+    box-shadow:var(--g-glow);
+  }
+  .btn-g:hover{background:#1aff88;transform:translateY(-2px);box-shadow:0 0 36px rgba(0,230,118,.45)}
+  .btn-ghost{
+    background:var(--s2);
+    color:var(--mid);
+    border:1px solid var(--br2);
+  }
+  .btn-ghost:hover{border-color:var(--br2);color:var(--tx);background:var(--s3);transform:translateY(-2px)}
+
+  /* scroll hint */
+  .scroll-hint{
+    position:absolute;bottom:34px;left:48px;
+    display:flex;align-items:center;gap:10px;z-index:1;
+  }
+  .scroll-hint span{
+    font-size:9px;font-weight:600;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--br2);
+  }
+  .scroll-line{
+    width:40px;height:1px;
+    background:linear-gradient(to right,var(--g2),transparent);
+    animation:scan 2s ease-in-out infinite;
+  }
+  @keyframes scan{0%,100%{opacity:.3;transform:scaleX(.4);transform-origin:left}50%{opacity:1;transform:scaleX(1)}}
+
+  /* ═══════════════════════════════════════
+     ABOUT — BENTO
+  ═══════════════════════════════════════ */
+  #about{background:var(--s1)}
+
+  .bento{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+  .bc{
+    background:var(--s2);
+    border:1px solid var(--br);
+    border-radius:var(--r-lg);
+    padding:26px;
+    transition:transform var(--t) var(--ease),border-color var(--t) var(--ease);
+  }
+  .bc:hover{transform:translateY(-2px);border-color:var(--br2)}
+
+  /* bio */
+  .bc-bio{
+    grid-column:span 2;
+    background:var(--s3);
+    border-color:var(--br);
+    padding:34px 36px;
+  }
+  .bc-bio:hover{border-color:var(--g-bd)}
+  .bc-bio-tag{
+    font-size:9.5px;font-weight:600;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--dim);
+    margin-bottom:18px;
+  }
+  .bc-bio p{font-size:15px;font-weight:300;line-height:1.85;color:var(--mid)}
+  .bc-bio p+p{margin-top:12px}
+  .bc-bio strong{color:var(--tx);font-weight:500}
+
+  /* stat */
+  .bc-stat{
+    min-height:155px;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    position:relative;overflow:hidden;
+  }
+  .bc-stat-ico{
+    position:absolute;top:16px;right:16px;
+    font-size:24px;opacity:.08;
+  }
+  .bc-num{
+    font-family:'Syne',sans-serif;
+    font-size:3.6rem;font-weight:800;line-height:1;
+    color:var(--g);margin-bottom:5px;
+    text-shadow:0 0 30px rgba(0,230,118,.3);
+  }
+  .bc-lbl{font-size:12px;font-weight:500;color:var(--dim);letter-spacing:.04em}
+
+  /* location */
+  .bc-loc{
+    min-height:155px;
+    background:var(--g-bg);
+    border-color:var(--g-bd);
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    text-align:center;gap:8px;
+  }
+  .bc-loc:hover{border-color:rgba(0,230,118,.35);background:rgba(0,230,118,.08)}
+  .bc-loc-ico{font-size:28px}
+  .bc-loc-name{font-size:13px;font-weight:500;color:var(--g2)}
+
+  /* available */
+  .bc-avail{
+    background:rgba(0,230,118,.04);
+    border-color:rgba(0,230,118,.12);
+    display:flex;flex-direction:column;
+    justify-content:center;gap:10px;min-height:155px;
+  }
+  .avail-dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--g);
+    box-shadow:0 0 10px var(--g);
+    animation:gpulse 2s ease-in-out infinite;
+  }
+  .avail-text strong{
+    display:block;font-size:14px;font-weight:600;
+    color:var(--g);margin-bottom:3px;
+  }
+  .avail-text span{font-size:12px;color:var(--dim)}
+
+  /* ═══════════════════════════════════════
+     EXPERIENCE
+  ═══════════════════════════════════════ */
+  #experience{background:var(--bg)}
+
+  .tl{position:relative}
+  .tl::before{
+    content:'';
+    position:absolute;left:19px;top:0;bottom:0;
+    width:1px;
+    background:linear-gradient(to bottom,var(--g) 0%,var(--g3) 40%,var(--br) 100%);
+  }
+  .tl-item{padding-left:60px;position:relative;margin-bottom:20px}
+  .tl-item:last-child{margin-bottom:0}
+
+  .tl-dot{
+    position:absolute;left:10px;top:24px;
+    width:20px;height:20px;border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--br2);
+    box-shadow:0 0 0 4px var(--bg);
+    z-index:1;
+    transition:border-color var(--t) var(--ease);
+  }
+  .tl-item:hover .tl-dot{border-color:var(--g)}
+  .tl-dot.cur{
+    border-color:var(--g);background:var(--g);
+    box-shadow:0 0 0 4px var(--bg),var(--g-glow);
+  }
+
+  .exp-card{
+    background:var(--s1);
+    border:1px solid var(--br);
+    border-radius:var(--r-lg);
+    padding:24px 28px;
+    position:relative;overflow:hidden;
+    transition:transform var(--t) var(--ease),border-color var(--t) var(--ease);
+  }
+  .exp-card::before{
+    content:'';
+    position:absolute;left:0;top:0;bottom:0;width:2px;
+    background:var(--g);
+    opacity:0;
+    transition:opacity var(--t) var(--ease);
+    box-shadow:2px 0 12px rgba(0,230,118,.3);
+  }
+  .exp-card:hover{transform:translateX(4px);border-color:var(--br2)}
+  .exp-card:hover::before{opacity:1}
+
+  .exp-top{
+    display:flex;justify-content:space-between;
+    align-items:flex-start;gap:12px;flex-wrap:wrap;
+    margin-bottom:4px;
+  }
+  .exp-role{
+    font-family:'Syne',sans-serif;
+    font-size:1.05rem;font-weight:700;color:var(--tx);
+    letter-spacing:-.01em;
+  }
+  .exp-badge{
+    font-size:10px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;
+    padding:3px 10px;border-radius:4px;
+    background:var(--s3);color:var(--dim);
+    white-space:nowrap;
+    border:1px solid var(--br2);
+  }
+  .exp-badge.cur{background:var(--g-bg);color:var(--g);border-color:var(--g-bd)}
+
+  .exp-meta{
+    font-size:12px;color:var(--dim);
+    display:flex;align-items:center;gap:7px;
+    flex-wrap:wrap;margin-bottom:12px;
+  }
+  .sep{color:var(--br2)}
+  .exp-desc{font-size:13.5px;font-weight:300;color:var(--mid);line-height:1.75}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .tag{
+    font-size:10px;font-weight:500;letter-spacing:.04em;
+    padding:3px 9px;border-radius:4px;
+    background:var(--s2);color:var(--dim);
+    border:1px solid var(--br);
+  }
+
+  /* ═══════════════════════════════════════
+     EDUCATION
+  ═══════════════════════════════════════ */
+  #education{background:var(--s1)}
+
+  .edu-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:12px;
+  }
+  .edu-card{
+    background:var(--s2);
+    border:1px solid var(--br);
+    border-radius:var(--r-lg);
+    padding:26px 22px;
+    position:relative;overflow:hidden;
+    transition:transform var(--t) var(--ease),border-color var(--t) var(--ease);
+  }
+  .edu-card::after{
+    content:'';
+    position:absolute;bottom:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--g),transparent);
+    transform:scaleX(0);transform-origin:left;
+    transition:transform .4s var(--ease);
+  }
+  .edu-card:hover{transform:translateY(-3px);border-color:var(--br2)}
+  .edu-card:hover::after{transform:scaleX(1)}
+
+  .edu-ico{
+    width:42px;height:42px;border-radius:10px;
+    background:var(--g-bg);border:1px solid var(--g-bd);
+    display:flex;align-items:center;justify-content:center;
+    font-size:19px;margin-bottom:16px;
+  }
+  .edu-deg{
+    font-family:'Syne',sans-serif;
+    font-size:.95rem;font-weight:700;
+    color:var(--tx);margin-bottom:5px;line-height:1.35;
+  }
+  .edu-school{font-size:12px;color:var(--dim);margin-bottom:10px}
+  .edu-yr{
+    display:inline-block;
+    font-size:10px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--g2);background:var(--g-bg);
+    padding:3px 9px;border-radius:4px;
+    border:1px solid var(--g-bd);
+  }
+
+  /* ═══════════════════════════════════════
+     SKILLS
+  ═══════════════════════════════════════ */
+  #skills{background:var(--bg);border-bottom:none}
+
+  .sk-wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:start}
+  .sk-sub{
+    font-size:9.5px;font-weight:600;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--dim);
+    margin-bottom:28px;
+  }
+  .sk-row{margin-bottom:22px}
+  .sk-hd{display:flex;justify-content:space-between;margin-bottom:10px}
+  .sk-name{font-size:13px;font-weight:400;color:var(--mid)}
+  .sk-pct{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--g);font-family:'Syne',sans-serif}
+  .sk-track{height:2px;border-radius:99px;background:var(--br2)}
+  .sk-fill{
+    height:100%;border-radius:99px;
+    background:var(--g);
+    transform-origin:left;transform:scaleX(0);
+    transition:transform 1.2s var(--ease);
+    box-shadow:0 0 8px rgba(0,230,118,.5);
+  }
+
+  .soft-list{display:flex;flex-direction:column}
+  .soft-item{
+    padding:13px 0;
+    border-top:1px solid var(--br);
+    font-size:13.5px;font-weight:300;color:var(--dim);
+    display:flex;align-items:center;justify-content:space-between;
+    transition:all var(--t) var(--ease);
+    cursor:default;
+  }
+  .soft-item:last-child{border-bottom:1px solid var(--br)}
+  .soft-item:hover{color:var(--g);padding-left:6px}
+  .soft-item::after{
+    content:'›';font-size:14px;color:var(--br2);
+    transition:color var(--t) var(--ease),transform var(--t) var(--ease);
+  }
+  .soft-item:hover::after{color:var(--g);transform:translateX(3px)}
+
+  /* tech grid */
+  .tech-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+    margin-top:28px;
+  }
+  .tech-chip{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    padding:14px 8px;
+    background:var(--s1);
+    border:1px solid var(--br);
+    border-radius:var(--r);
+    font-size:10px;font-weight:600;letter-spacing:.06em;
+    color:var(--dim);text-align:center;
+    cursor:default;
+    transition:all var(--t) var(--ease);
+  }
+  .tech-chip:hover{
+    background:var(--g-bg);
+    border-color:var(--g-bd);
+    color:var(--g);
+    transform:translateY(-2px);
+  }
+  .tech-chip .ico{font-size:19px}
+
+  /* ═══════════════════════════════════════
+     PROJECTS
+  ═══════════════════════════════════════ */
+  #projects{background:var(--s1)}
+
+  .proj-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:14px;
+  }
+  .proj-card{
+    background:var(--s2);
+    border:1px solid var(--br);
+    border-radius:var(--r-lg);
+    overflow:hidden;
+    transition:transform var(--t) var(--ease),border-color var(--t) var(--ease);
+    position:relative;
+  }
+  .proj-card::before{
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,var(--g),transparent);
+    opacity:0;transition:opacity var(--t) var(--ease);
+  }
+  .proj-card:hover{transform:translateY(-4px);border-color:var(--g-bd)}
+  .proj-card:hover::before{opacity:1}
+
+  /* browser mockup */
+  .proj-frame{height:162px;position:relative;overflow:hidden}
+  .proj-bar{
+    position:absolute;top:0;left:0;right:0;
+    height:32px;z-index:2;
+    background:rgba(0,0,0,.7);
+    display:flex;align-items:center;padding:0 12px;gap:8px;
+  }
+  .proj-dots{display:flex;gap:5px}
+  .proj-dots i{width:9px;height:9px;border-radius:50%;display:block}
+  .proj-dots i:nth-child(1){background:#ff5f56}
+  .proj-dots i:nth-child(2){background:#febc2e}
+  .proj-dots i:nth-child(3){background:#28c841}
+  .proj-url{
+    flex:1;height:16px;border-radius:3px;
+    background:rgba(255,255,255,.05);
+    font-size:9.5px;color:rgba(255,255,255,.2);
+    display:flex;align-items:center;padding:0 9px;
+    font-family:'DM Sans',sans-serif;
+  }
+  .proj-bg{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:46px;
+  }
+  .p1{background:linear-gradient(135deg,#050c1a,#0a1830,#030f1a)}
+  .p2{background:linear-gradient(135deg,#0a0514,#150a28,#050a1a)}
+  .p3{background:linear-gradient(135deg,#040d05,#091a0c,#031008)}
+
+  .proj-body{padding:20px 22px 22px}
+  .proj-name{
+    font-family:'Syne',sans-serif;
+    font-size:1.02rem;font-weight:700;
+    color:var(--tx);margin-bottom:7px;
+    transition:color var(--t) var(--ease);
+  }
+  .proj-card:hover .proj-name{color:var(--g)}
+  .proj-desc{font-size:13px;font-weight:300;color:var(--mid);line-height:1.7;margin-bottom:14px}
+
+  /* ═══════════════════════════════════════
+     CONTACT
+  ═══════════════════════════════════════ */
+  #contact{background:var(--bg);border-bottom:none;position:relative;overflow:hidden}
+  #contact::after{
+    content:'';
+    position:absolute;width:600px;height:600px;
+    border-radius:50%;top:-200px;right:-200px;
+    background:radial-gradient(circle,rgba(0,230,118,.05) 0%,transparent 65%);
+    pointer-events:none;
+  }
+
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .contact-lead{
+    font-size:15.5px;font-weight:300;color:var(--mid);
+    line-height:1.9;margin-bottom:28px;
+  }
+  .contact-lead em{color:var(--tx);font-style:normal}
+
+  .c-list{display:flex;flex-direction:column}
+  .c-row{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 0;
+    border-top:1px solid var(--br);
+    transition:all var(--t) var(--ease);
+    color:var(--mid);
+    position:relative;
+  }
+  .c-row:last-child{border-bottom:1px solid var(--br)}
+  .c-row::after{
+    content:'';
+    position:absolute;left:0;right:0;bottom:0;height:1px;
+    background:var(--g);
+    transform:scaleX(0);transform-origin:left;
+    transition:transform .3s var(--ease);
+  }
+  .c-row:hover{color:var(--tx)}
+  .c-row:hover::after{transform:scaleX(1)}
+
+  .c-icon{
+    width:36px;height:36px;border-radius:8px;
+    background:var(--s2);border:1px solid var(--br);
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;flex-shrink:0;
+    transition:all var(--t) var(--ease);
+  }
+  .c-row:hover .c-icon{border-color:var(--g-bd);background:var(--g-bg)}
+  .c-info{flex:1}
+  .c-label{
+    font-size:9.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--dim);margin-bottom:1px;
+  }
+  .c-val{font-size:13px;font-weight:400}
+  .c-arr{
+    font-size:12px;color:var(--br2);
+    transition:all var(--t) var(--ease);
+  }
+  .c-row:hover .c-arr{color:var(--g);transform:translate(3px,-3px)}
+
+  /* ── FOOTER ──────────────────────────── */
+  footer{
+    background:#030303;
+    padding:22px 48px;text-align:center;
+    font-size:11px;font-weight:400;letter-spacing:.08em;
+    color:var(--dim);
+    border-top:1px solid var(--br);
+  }
+
+  /* ── RESPONSIVE ─────────────────────── */
+  @media(max-width:900px){
+    #hero{padding:80px 28px 100px}
+    section{padding:76px 28px}
+    .bento{grid-template-columns:1fr 1fr}
+    .bc-bio{grid-column:span 2}
+    .sk-wrap{grid-template-columns:1fr;gap:48px}
+    .contact-grid{grid-template-columns:1fr;gap:44px}
+  }
+  @media(max-width:660px){
+    #nav{display:none}
+    #lt{top:14px;right:14px}
+    .bento{grid-template-columns:1fr}
+    .bc-bio{grid-column:span 1}
+    .tl::before{left:13px}
+    .tl-dot{left:4px}
+    .tl-item{padding-left:44px}
+    .exp-top{flex-direction:column;gap:7px}
+    section{padding:60px 18px}
+    .tech-grid{grid-template-columns:repeat(3,1fr)}
+    footer{padding:20px}
+  }
+  @media(max-width:420px){
+    .h-cta{flex-direction:column;align-items:flex-start}
+    .tech-grid{grid-template-columns:repeat(2,1fr)}
+  }
+
+  </style>
+</head>
+<body>
+
+<!-- LANG TOGGLE -->
+<button id="lt" onclick="tgl()"><span id="lt-lbl">EN</span></button>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#about"      data-es="Sobre mí"    data-en="About">Sobre mí</a>
+  <a href="#experience" data-es="Experiencia" data-en="Experience">Experiencia</a>
+  <a href="#education"  data-es="Educación"   data-en="Education">Educación</a>
+  <a href="#skills"     data-es="Habilidades" data-en="Skills">Habilidades</a>
+  <a href="#projects"   data-es="Proyectos"   data-en="Projects">Proyectos</a>
+  <a href="#contact"    data-es="Contacto"    data-en="Contact">Contacto</a>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-inner">
+
+    <div class="h-badge">
+      <span class="h-dot"></span>
+      <span data-es="Disponible para nuevas oportunidades" data-en="Open to new opportunities">Disponible para nuevas oportunidades</span>
+    </div>
+
+    <h1>EDGAR<span class="ghost">GONZÁLEZ<span class="cursor"></span></span></h1>
+
+    <p class="h-role"
+       data-es="Liferay Developer &amp; Full Stack Java Engineer"
+       data-en="Liferay Developer &amp; Full Stack Java Engineer">
+      Liferay Developer &amp; Full Stack Java Engineer
+    </p>
+    <p class="h-loc">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      <span data-es="Barcelona, España · 7+ años de experiencia" data-en="Barcelona, Spain · 7+ years of experience">Barcelona, España · 7+ años de experiencia</span>
+    </p>
+
+    <div class="h-stack">
+      <span class="h-pill">Java</span>
+      <span class="h-pill">Liferay DXP</span>
+      <span class="h-pill">Spring Boot</span>
+      <span class="h-pill">React</span>
+      <span class="h-pill">Docker</span>
+      <span class="h-pill">Jenkins</span>
+      <span class="h-pill">Node.js</span>
+      <span class="h-pill">TDD · BDD</span>
+    </div>
+
+    <div class="h-cta">
+      <a href="#contact"    class="btn btn-g"    data-es="Contáctame" data-en="Get in touch">Contáctame</a>
+      <a href="#experience" class="btn btn-ghost" data-es="Ver experiencia" data-en="See experience">Ver experiencia</a>
+    </div>
+
+  </div>
+
+  <div class="scroll-hint">
+    <span data-es="scroll" data-en="scroll">scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══════════════════════════════════════════ -->
+<section id="about">
+  <div class="wrap">
+    <p class="eyebrow rv" data-es="Perfil" data-en="Profile">Perfil</p>
+    <h2 class="sh rv" data-es="Sobre mí" data-en="About me">Sobre mí</h2>
+    <div class="bento">
+      <div class="bc bc-bio rv">
+        <p class="bc-bio-tag"
+           data-es="Senior Software Engineer | Java · JavaScript · Liferay | Docker · Kubernetes · Ansible | Explorando IA Generativa"
+           data-en="Senior Software Engineer | Java · JavaScript · Liferay | Docker · Kubernetes · Ansible | Exploring Generative AI">
+          Senior Software Engineer | Java · JavaScript · Liferay | Docker · Kubernetes · Ansible | Explorando IA Generativa
+        </p>
+        <p data-es="Honestamente, no siento que trabajo — hago lo que amo, y resulta que eso es construir software y encontrar soluciones a problemas reales. Ocho años después, sigo emocionándome al resolver problemas y aprender nuevas tecnologías en el camino."
+           data-en="Honestly, I don't feel like I work — I do what I love, and that happens to be building software and finding solutions to real problems. Eight years in, and I still get excited solving problems and picking up new technologies along the way.">
+          Honestamente, no siento que trabajo — hago lo que amo, y resulta que eso es construir software y encontrar soluciones a problemas reales. Ocho años después, sigo emocionándome al resolver problemas y aprender nuevas tecnologías en el camino.
+        </p>
+        <p data-es="He trabajado en distintas industrias y proyectos, lo que me ha dado una perspectiva bastante amplia. Mis áreas más fuertes son <strong>Java y JavaScript</strong> — he construido mucho con ambos, en el backend y tocando también el frontend con React y Angular. <strong>Liferay</strong> ha sido una parte importante de mi carrera: migraciones completas entre versiones, modernización de portales y construcción de nuevas soluciones desde cero."
+           data-en="I've worked across different industries and projects, which has given me a pretty broad perspective. My strongest areas are <strong>Java and JavaScript</strong> — I've built a lot with both, on the backend and touching the frontend too with React and Angular. <strong>Liferay</strong> has also been a big part of my career, doing full migrations between versions, modernizing old portals, and building new things from scratch.">
+          He trabajado en distintas industrias y proyectos, lo que me ha dado una perspectiva bastante amplia. Mis áreas más fuertes son <strong>Java y JavaScript</strong> — he construido mucho con ambos, en el backend y tocando también el frontend con React y Angular. <strong>Liferay</strong> ha sido una parte importante de mi carrera: migraciones completas entre versiones, modernización de portales y construcción de nuevas soluciones desde cero.
+        </p>
+        <p data-es="En el lado DevOps, he configurado pipelines CI/CD con <strong>Jenkins</strong>, automatizado despliegues con <strong>Ansible</strong> y trabajado con <strong>Docker y Kubernetes</strong>. No me basta con escribir código — me importa que llegue a producción y se mantenga estable. Últimamente exploro <strong>IA generativa</strong>: LLMs, LangChain, pipelines RAG. Es lo más interesante que ocurre en tech ahora mismo."
+           data-en="On the DevOps side I've set up CI/CD pipelines with <strong>Jenkins</strong>, automated deployments with <strong>Ansible</strong>, and worked with <strong>Docker and Kubernetes</strong>. Not just writing code — making sure it gets shipped and stays stable. Lately I've been exploring <strong>generative AI</strong>: LLMs, LangChain, RAG pipelines. It's the most interesting thing happening in tech right now.">
+          En el lado DevOps, he configurado pipelines CI/CD con <strong>Jenkins</strong>, automatizado despliegues con <strong>Ansible</strong> y trabajado con <strong>Docker y Kubernetes</strong>. No me basta con escribir código — me importa que llegue a producción y se mantenga estable. Últimamente exploro <strong>IA generativa</strong>: LLMs, LangChain, pipelines RAG. Es lo más interesante que ocurre en tech ahora mismo.
+        </p>
+      </div>
+      <div class="bc bc-loc rv d1">
+        <div class="bc-loc-ico">🏙️</div>
+        <div class="bc-loc-name" data-es="Barcelona, España" data-en="Barcelona, Spain">Barcelona, España</div>
+      </div>
+      <div class="bc bc-stat rv d1">
+        <div class="bc-stat-ico">💼</div>
+        <div class="bc-num" data-target="7">7+</div>
+        <div class="bc-lbl" data-es="Años de experiencia" data-en="Years of experience">Años de experiencia</div>
+      </div>
+      <div class="bc bc-stat rv d2">
+        <div class="bc-stat-ico">🏢</div>
+        <div class="bc-num" data-target="8">8</div>
+        <div class="bc-lbl" data-es="Empresas en 2 países" data-en="Companies in 2 countries">Empresas en 2 países</div>
+      </div>
+      <div class="bc bc-stat rv d3">
+        <div class="bc-stat-ico">⚡</div>
+        <div class="bc-num" data-target="15">15+</div>
+        <div class="bc-lbl" data-es="Tecnologías dominadas" data-en="Technologies mastered">Tecnologías dominadas</div>
+      </div>
+      <div class="bc bc-avail rv d2">
+        <div class="avail-dot"></div>
+        <div class="avail-text">
+          <strong data-es="Incorporación inmediata" data-en="Immediately available">Incorporación inmediata</strong>
+          <span data-es="Remoto · Presencial · Reubicación" data-en="Remote · On-site · Relocation">Remoto · Presencial · Reubicación</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EXPERIENCE ═════════════════════════════════════ -->
+<section id="experience">
+  <div class="wrap">
+    <p class="eyebrow rv" data-es="Trayectoria" data-en="Career">Trayectoria</p>
+    <h2 class="sh rv" data-es="Experiencia laboral" data-en="Work experience">Experiencia laboral</h2>
+    <div class="tl">
+
+      <div class="tl-item rv">
+        <div class="tl-dot cur"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role">Liferay Developer</h3>
+            <span class="exp-badge cur" data-es="Actual" data-en="Current">Actual</span>
+          </div>
+          <div class="exp-meta">
+            <span>Oxigent</span><span class="sep">·</span>
+            <span data-es="Barcelona, España" data-en="Barcelona, Spain">Barcelona, España</span>
+            <span class="sep">·</span>
+            <span data-es="Oct 2022 — Presente" data-en="Oct 2022 — Present">Oct 2022 — Presente</span>
+          </div>
+          <p class="exp-desc" data-es="Desarrollo y customización en Liferay DXP con Java, integración React, despliegue Docker. TDD/BDD, Jenkins CI y análisis SonarQube. Coordinación con múltiples departamentos." data-en="Liferay DXP development and customization with Java, React integration, Docker deployments. TDD/BDD, Jenkins CI, and SonarQube quality analysis. Cross-department coordination.">Desarrollo y customización en Liferay DXP con Java, integración React, despliegue Docker. TDD/BDD, Jenkins CI y análisis SonarQube. Coordinación con múltiples departamentos.</p>
+          <div class="tags"><span class="tag">Liferay DXP</span><span class="tag">Java</span><span class="tag">React</span><span class="tag">Docker</span><span class="tag">Jenkins</span><span class="tag">SonarQube</span><span class="tag">TDD · BDD</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv d1">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role" data-es="Líder Técnico" data-en="Technical Lead">Líder Técnico</h3>
+            <span class="exp-badge" data-es="Ene — Sep 2022" data-en="Jan — Sep 2022">Ene — Sep 2022</span>
+          </div>
+          <div class="exp-meta"><span>Indra</span><span class="sep">·</span><span data-es="Bogotá, Colombia" data-en="Bogotá, Colombia">Bogotá, Colombia</span></div>
+          <p class="exp-desc" data-es="Liderazgo técnico: código limpio, TDD, planificación de sprints y gestión de puestas en producción." data-en="Technical leadership: clean code, TDD, sprint planning, and production deployment management.">Liderazgo técnico: código limpio, TDD, planificación de sprints y gestión de puestas en producción.</p>
+          <div class="tags"><span class="tag">Liderazgo</span><span class="tag">Clean Code</span><span class="tag">TDD</span><span class="tag">Scrum</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv d2">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role" data-es="Consultor Java" data-en="Java Consultant">Consultor Java</h3>
+            <span class="exp-badge" data-es="Jun — Nov 2021" data-en="Jun — Nov 2021">Jun — Nov 2021</span>
+          </div>
+          <div class="exp-meta"><span>Periferia IT Group</span><span class="sep">·</span><span>Colombia</span></div>
+          <p class="exp-desc" data-es="Liferay DXP, Spring web services, JavaScript/CSS y pipelines CI/CD en Azure DevOps." data-en="Liferay DXP, Spring web services, JavaScript/CSS, and CI/CD pipelines on Azure DevOps.">Liferay DXP, Spring web services, JavaScript/CSS y pipelines CI/CD en Azure DevOps.</p>
+          <div class="tags"><span class="tag">Liferay DXP</span><span class="tag">Spring</span><span class="tag">Azure DevOps</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role">Full Stack Developer — Java · React · Node</h3>
+            <span class="exp-badge" data-es="Ene 2020 — Jun 2021" data-en="Jan 2020 — Jun 2021">Ene 2020 — Jun 2021</span>
+          </div>
+          <div class="exp-meta"><span>Novatec</span><span class="sep">·</span><span>Bogotá</span></div>
+          <p class="exp-desc" data-es="Migración Claro Empresas en Liferay. C#/.NET Core para MetLife. React, Angular, Node.js e Ionic." data-en="Claro Empresas migration on Liferay. C#/.NET Core for MetLife. React, Angular, Node.js, and Ionic.">Migración Claro Empresas en Liferay. C#/.NET Core para MetLife. React, Angular, Node.js e Ionic.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Liferay</span><span class="tag">React</span><span class="tag">Angular</span><span class="tag">Node.js</span><span class="tag">C# · .NET</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv d1">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role">Backend Java Developer</h3>
+            <span class="exp-badge" data-es="May 2019 — Ene 2020" data-en="May 2019 — Jan 2020">May 2019 — Ene 2020</span>
+          </div>
+          <div class="exp-meta"><span>VASS</span><span class="sep">·</span><span>Colombia</span></div>
+          <p class="exp-desc" data-es="Liferay, portlets REST, React/Angular. Jenkins, Gradle, Scrum." data-en="Liferay, REST portlets, React/Angular. Jenkins, Gradle, Scrum.">Liferay, portlets REST, React/Angular. Jenkins, Gradle, Scrum.</p>
+          <div class="tags"><span class="tag">Liferay</span><span class="tag">Java</span><span class="tag">React</span><span class="tag">Jenkins</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv d2">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role">Java Developer</h3>
+            <span class="exp-badge" data-es="Sep 2018 — Abr 2019" data-en="Sep 2018 — Apr 2019">Sep 2018 — Abr 2019</span>
+          </div>
+          <div class="exp-meta"><span>Stefanini Latam</span><span class="sep">·</span><span>Colombia</span></div>
+          <p class="exp-desc" data-es="Spring + Java 8, pruebas unitarias, SonarQube, REST, Vue.js." data-en="Spring + Java 8, unit testing, SonarQube, REST, Vue.js.">Spring + Java 8, pruebas unitarias, SonarQube, REST, Vue.js.</p>
+          <div class="tags"><span class="tag">Java 8</span><span class="tag">Spring</span><span class="tag">Vue.js</span><span class="tag">SonarQube</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role">Java Developer</h3>
+            <span class="exp-badge" data-es="Dic 2017 — Sep 2018" data-en="Dec 2017 — Sep 2018">Dic 2017 — Sep 2018</span>
+          </div>
+          <div class="exp-meta"><span>Everis</span><span class="sep">·</span><span>Colombia</span></div>
+          <p class="exp-desc" data-es="Scrum, Java + EJB 2.0, análisis de requerimientos, WebSphere." data-en="Scrum, Java + EJB 2.0, requirements analysis, WebSphere.">Scrum, Java + EJB 2.0, análisis de requerimientos, WebSphere.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">EJB 2.0</span><span class="tag">WebSphere</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item rv d1">
+        <div class="tl-dot"></div>
+        <div class="exp-card">
+          <div class="exp-top">
+            <h3 class="exp-role" data-es="Java Developer Jr." data-en="Junior Java Developer">Java Developer Jr.</h3>
+            <span class="exp-badge" data-es="Dic 2016 — Jul 2017" data-en="Dec 2016 — Jul 2017">Dic 2016 — Jul 2017</span>
+          </div>
+          <div class="exp-meta"><span>Globant</span><span class="sep">·</span><span>Colombia</span></div>
+          <p class="exp-desc" data-es="Primer rol: Scrum, JPA, Spring, MVC, Selenium, Oracle, Tomcat." data-en="First role: Scrum, JPA, Spring, MVC, Selenium, Oracle, Tomcat.">Primer rol: Scrum, JPA, Spring, MVC, Selenium, Oracle, Tomcat.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Spring</span><span class="tag">JPA</span><span class="tag">Selenium</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ EDUCATION ══════════════════════════════════════ -->
+<section id="education">
+  <div class="wrap">
+    <p class="eyebrow rv" data-es="Formación" data-en="Education">Formación</p>
+    <h2 class="sh rv" data-es="Educación &amp; certificaciones" data-en="Education &amp; certifications">Educación &amp; certificaciones</h2>
+    <div class="edu-grid">
+      <div class="edu-card rv">
+        <div class="edu-ico">🎓</div>
+        <h3 class="edu-deg" data-es="Tecnólogo en Análisis y Desarrollo de Sistemas de Información" data-en="Technologist in Information Systems Analysis &amp; Development">Tecnólogo en Análisis y Desarrollo de Sistemas de Información</h3>
+        <p class="edu-school">SENA · Bogotá D.C.</p>
+        <span class="edu-yr" data-es="2017 · Promedio 4.5" data-en="2017 · GPA 4.5">2017 · Promedio 4.5</span>
+      </div>
+      <div class="edu-card rv d1">
+        <div class="edu-ico">🌿</div>
+        <h3 class="edu-deg" data-es="Git Avanzado &amp; Principios SOLID" data-en="Advanced Git &amp; SOLID Principles">Git Avanzado &amp; Principios SOLID</h3>
+        <p class="edu-school" data-es="Cursos online certificados" data-en="Certified online courses">Cursos online certificados</p>
+        <span class="edu-yr" data-es="Formación continua" data-en="Continuous">Formación continua</span>
+      </div>
+      <div class="edu-card rv d2">
+        <div class="edu-ico">☕</div>
+        <h3 class="edu-deg" data-es="POO en Java &amp; Bases de datos" data-en="OOP in Java &amp; Databases">POO en Java &amp; Bases de datos</h3>
+        <p class="edu-school" data-es="Cursos online certificados" data-en="Certified online courses">Cursos online certificados</p>
+        <span class="edu-yr" data-es="Formación continua" data-en="Continuous">Formación continua</span>
+      </div>
+      <div class="edu-card rv d3">
+        <div class="edu-ico">🔬</div>
+        <h3 class="edu-deg" data-es="Calidad del software &amp; Nuevas TIC" data-en="Software Quality &amp; New Technologies">Calidad del software &amp; Nuevas TIC</h3>
+        <p class="edu-school" data-es="Cursos online certificados" data-en="Certified online courses">Cursos online certificados</p>
+        <span class="edu-yr" data-es="Formación continua" data-en="Continuous">Formación continua</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SKILLS ═════════════════════════════════════════ -->
+<section id="skills">
+  <div class="wrap">
+    <p class="eyebrow rv" data-es="Competencias" data-en="Competencies">Competencias</p>
+    <h2 class="sh rv" data-es="Habilidades" data-en="Skills">Habilidades</h2>
+    <div class="sk-wrap">
+      <div class="rv">
+        <p class="sk-sub" data-es="Habilidades técnicas" data-en="Technical skills">Habilidades técnicas</p>
+        <div class="sk-row"><div class="sk-hd"><span class="sk-name">Java / Spring / Spring Boot</span><span class="sk-pct">95%</span></div><div class="sk-track"><div class="sk-fill" data-w=".95"></div></div></div>
+        <div class="sk-row"><div class="sk-hd"><span class="sk-name">Liferay DXP</span><span class="sk-pct">93%</span></div><div class="sk-track"><div class="sk-fill" data-w=".93"></div></div></div>
+        <div class="sk-row"><div class="sk-hd"><span class="sk-name">React / Angular / JavaScript</span><span class="sk-pct">85%</span></div><div class="sk-track"><div class="sk-fill" data-w=".85"></div></div></div>
+        <div class="sk-row"><div class="sk-hd"><span class="sk-name">Docker / Jenkins / CI-CD</span><span class="sk-pct">82%</span></div><div class="sk-track"><div class="sk-fill" data-w=".82"></div></div></div>
+        <div class="sk-row"><div class="sk-hd"><span class="sk-name">Oracle / SQL / JPA / Hibernate</span><span class="sk-pct">83%</span></div><div class="sk-track"><div class="sk-fill" data-w=".83"></div></div></div>
+        <div class="sk-row"><div class="sk-hd"><span class="sk-name">Node.js / Vue.js</span><span class="sk-pct">75%</span></div><div class="sk-track"><div class="sk-fill" data-w=".75"></div></div></div>
+        <div class="tech-grid">
+          <div class="tech-chip"><span class="ico">☕</span>Java</div>
+          <div class="tech-chip"><span class="ico">🌿</span>Spring</div>
+          <div class="tech-chip"><span class="ico">🔵</span>Liferay</div>
+          <div class="tech-chip"><span class="ico">⚛️</span>React</div>
+          <div class="tech-chip"><span class="ico">🐳</span>Docker</div>
+          <div class="tech-chip"><span class="ico">🔧</span>Jenkins</div>
+          <div class="tech-chip"><span class="ico">🗄️</span>Oracle</div>
+          <div class="tech-chip"><span class="ico">🔎</span>Sonar</div>
+        </div>
+      </div>
+      <div class="rv d2">
+        <p class="sk-sub" data-es="Habilidades blandas" data-en="Soft skills">Habilidades blandas</p>
+        <div class="soft-list">
+          <div class="soft-item" data-es="Liderazgo técnico"        data-en="Technical leadership">Liderazgo técnico</div>
+          <div class="soft-item" data-es="Resolución de problemas"   data-en="Problem solving">Resolución de problemas</div>
+          <div class="soft-item" data-es="Trabajo en equipo"         data-en="Teamwork">Trabajo en equipo</div>
+          <div class="soft-item" data-es="Organización"              data-en="Organization">Organización</div>
+          <div class="soft-item" data-es="Adaptabilidad"             data-en="Adaptability">Adaptabilidad</div>
+          <div class="soft-item" data-es="Empatía"                   data-en="Empathy">Empatía</div>
+          <div class="soft-item" data-es="Creatividad"               data-en="Creativity">Creatividad</div>
+          <div class="soft-item" data-es="Motivación"                data-en="Self-motivation">Motivación</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROJECTS ═══════════════════════════════════════ -->
+<section id="projects">
+  <div class="wrap">
+    <p class="eyebrow rv" data-es="Portafolio" data-en="Portfolio">Portafolio</p>
+    <h2 class="sh rv" data-es="Proyectos destacados" data-en="Featured projects">Proyectos destacados</h2>
+    <div class="proj-grid">
+
+      <div class="proj-card rv">
+        <div class="proj-frame">
+          <div class="proj-bg p1">
+            <div class="proj-bar">
+              <div class="proj-dots"><i></i><i></i><i></i></div>
+              <div class="proj-url">claro-empresas.corp</div>
+            </div>
+            🌐
+          </div>
+        </div>
+        <div class="proj-body">
+          <h3 class="proj-name" data-es="Migración Portal Claro Empresas" data-en="Claro Empresas Portal Migration">Migración Portal Claro Empresas</h3>
+          <p class="proj-desc" data-es="Migración del portal a Liferay DXP con servicios REST, arquitectura React y patrones de diseño escalables." data-en="Portal migration to Liferay DXP with REST services, React architecture, and scalable design patterns.">Migración del portal a Liferay DXP con servicios REST, arquitectura React y patrones de diseño escalables.</p>
+          <div class="tags"><span class="tag">Liferay DXP</span><span class="tag">Java</span><span class="tag">React</span><span class="tag">REST</span></div>
+        </div>
+      </div>
+
+      <div class="proj-card rv d1">
+        <div class="proj-frame">
+          <div class="proj-bg p2">
+            <div class="proj-bar">
+              <div class="proj-dots"><i></i><i></i><i></i></div>
+              <div class="proj-url">metlife.integration.srv</div>
+            </div>
+            🏦
+          </div>
+        </div>
+        <div class="proj-body">
+          <h3 class="proj-name" data-es="Integración servicios MetLife" data-en="MetLife Services Integration">Integración servicios MetLife</h3>
+          <p class="proj-desc" data-es="Plataforma de integración financiera en C#/.NET Core con lógica de negocio robusta y frontend en JavaScript." data-en="Financial integration platform in C#/.NET Core with robust business logic and JavaScript front-end.">Plataforma de integración financiera en C#/.NET Core con lógica de negocio robusta y frontend en JavaScript.</p>
+          <div class="tags"><span class="tag">C#</span><span class="tag">.NET Core</span><span class="tag">JavaScript</span><span class="tag">jQuery</span></div>
+        </div>
+      </div>
+
+      <div class="proj-card rv d2">
+        <div class="proj-frame">
+          <div class="proj-bg p3">
+            <div class="proj-bar">
+              <div class="proj-dots"><i></i><i></i><i></i></div>
+              <div class="proj-url">oxigent.portal.es</div>
+            </div>
+            ⚙️
+          </div>
+        </div>
+        <div class="proj-body">
+          <h3 class="proj-name" data-es="Portal Digital — Oxigent Barcelona" data-en="Digital Portal — Oxigent Barcelona">Portal Digital — Oxigent Barcelona</h3>
+          <p class="proj-desc" data-es="Liferay DXP avanzado: módulos Java, componentes React, Docker, pipelines Jenkins y SonarQube." data-en="Advanced Liferay DXP: Java modules, React components, Docker, Jenkins pipelines, and SonarQube.">Liferay DXP avanzado: módulos Java, componentes React, Docker, pipelines Jenkins y SonarQube.</p>
+          <div class="tags"><span class="tag">Liferay DXP</span><span class="tag">Docker</span><span class="tag">Jenkins</span><span class="tag">SonarQube</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ════════════════════════════════════════ -->
+<section id="contact">
+  <div class="wrap">
+    <p class="eyebrow rv" data-es="Contacto" data-en="Contact">Contacto</p>
+    <h2 class="sh rv" data-es="Hablemos" data-en="Let's talk">Hablemos</h2>
+    <div class="contact-grid">
+      <div class="rv">
+        <p class="contact-lead"
+           data-es="¿Tienes un proyecto <em>Liferay, Java o Full Stack</em> en mente? Disponible para nuevas oportunidades en Barcelona, remoto o con posibilidad de reubicación."
+           data-en="Working on a <em>Liferay, Java, or Full Stack</em> project? Open to new opportunities in Barcelona, remote, or with relocation.">
+          ¿Tienes un proyecto <em>Liferay, Java o Full Stack</em> en mente? Disponible para nuevas oportunidades en Barcelona, remoto o con posibilidad de reubicación.
+        </p>
+        <a href="mailto:egonzgar00@gmail.com" class="btn btn-g" style="margin-top:32px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span data-es="Enviar email" data-en="Send email">Enviar email</span>
+        </a>
+      </div>
+      <div class="c-list rv d2">
+        <a href="mailto:egonzgar00@gmail.com" class="c-row">
+          <div class="c-icon">✉️</div>
+          <div class="c-info">
+            <div class="c-label">Email</div>
+            <div class="c-val">egonzgar00@gmail.com</div>
+          </div>
+          <span class="c-arr">↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/edgonzalez01/" target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon">💼</div>
+          <div class="c-info">
+            <div class="c-label">LinkedIn</div>
+            <div class="c-val">edgonzalez01</div>
+          </div>
+          <span class="c-arr">↗</span>
+        </a>
+        <a href="tel:+34670084821" class="c-row">
+          <div class="c-icon">📱</div>
+          <div class="c-info">
+            <div class="c-label" data-es="Teléfono" data-en="Phone">Teléfono</div>
+            <div class="c-val">+34 670 084 821</div>
+          </div>
+          <span class="c-arr">↗</span>
+        </a>
+        <a href="#" class="c-row">
+          <div class="c-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:rgba(255,255,255,.4)"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48.99.1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </div>
+          <div class="c-info">
+            <div class="c-label">GitHub</div>
+            <div class="c-val" data-es="Añade tu usuario de GitHub" data-en="Add your GitHub username">Añade tu usuario de GitHub</div>
+          </div>
+          <span class="c-arr">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span data-es="© 2025 Edgar Eduardo González Garzón · Barcelona, España" data-en="© 2025 Edgar Eduardo González Garzón · Barcelona, Spain">
+    © 2025 Edgar Eduardo González Garzón · Barcelona, España
+  </span>
+</footer>
+
+<!-- ══ JS ══════════════════════════════════════════════ -->
+<script>
+  /* lang */
+  let lang='es';
+  function tgl(){
+    lang=lang==='es'?'en':'es';
+    document.getElementById('lt-lbl').textContent=lang==='es'?'EN':'ES';
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-es]').forEach(el=>{
+      const v=el.getAttribute('data-'+lang);
+      if(v!==null)el.innerHTML=v;
+    });
+  }
+
+  /* reveal */
+  function initReveal(){
+    if(!('IntersectionObserver' in window))return;
+    document.querySelectorAll('.rv').forEach(el=>el.classList.add('anim-ready'));
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+      });
+    },{threshold:0});
+    document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  }
+  document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',initReveal)
+    :initReveal();
+
+  /* skill bars */
+  let barsRan=false;
+  const skEl=document.getElementById('skills');
+  if(skEl&&'IntersectionObserver' in window){
+    new IntersectionObserver(entries=>{
+      if(entries[0].isIntersecting&&!barsRan){
+        barsRan=true;
+        document.querySelectorAll('.sk-fill').forEach((b,i)=>{
+          const w=parseFloat(b.dataset.w||0);
+          setTimeout(()=>{b.style.transform=`scaleX(${w})`;},i*90);
+        });
+      }
+    },{threshold:.1}).observe(skEl);
+  }
+
+  /* counters */
+  if('IntersectionObserver' in window){
+    const cio=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting)return;
+        const el=e.target;
+        const target=parseInt(el.dataset.target,10);
+        const suffix=el.textContent.includes('+')?'+':'';
+        let cur=0;
+        const step=Math.max(1,Math.ceil(target/28));
+        const timer=setInterval(()=>{
+          cur=Math.min(cur+step,target);
+          el.textContent=cur+suffix;
+          if(cur>=target)clearInterval(timer);
+        },44);
+        cio.unobserve(el);
+      });
+    },{threshold:.5});
+    document.querySelectorAll('[data-target]').forEach(el=>cio.observe(el));
+  }
+
+  /* active nav */
+  if('IntersectionObserver' in window){
+    const nl=document.querySelectorAll('#nav a');
+    document.querySelectorAll('section[id]').forEach(s=>{
+      new IntersectionObserver(entries=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting)
+            nl.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id));
+        });
+      },{rootMargin:'-40% 0px -55% 0px'}).observe(s);
+    });
+  }
+</script>
+</body>
+</html>
