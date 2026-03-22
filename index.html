@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
 
   /* ── TOKENS ─────────────────────────────────────── */
@@ -311,6 +313,8 @@
     position:absolute;top:16px;right:16px;
     font-size:24px;opacity:.08;
   }
+  .bc-stat-ico svg{width:28px;height:28px;stroke:currentColor;display:block}
+  .bc-loc-ico svg{width:32px;height:32px;stroke:var(--g);display:block}
   .bc-num{
     font-family:'Syne',sans-serif;
     font-size:3.6rem;font-weight:800;line-height:1;
@@ -468,8 +472,9 @@
     width:42px;height:42px;border-radius:10px;
     background:var(--g-bg);border:1px solid var(--g-bd);
     display:flex;align-items:center;justify-content:center;
-    font-size:19px;margin-bottom:16px;
+    font-size:19px;margin-bottom:16px;color:var(--g);
   }
+  .edu-ico svg{width:20px;height:20px;stroke:currentColor;display:block}
   .edu-deg{
     font-family:'Syne',sans-serif;
     font-size:.95rem;font-weight:700;
@@ -548,7 +553,9 @@
     color:var(--g);
     transform:translateY(-2px);
   }
-  .tech-chip .ico{font-size:19px}
+  .tech-chip .ico{font-size:19px;display:flex;align-items:center;justify-content:center;line-height:1}
+  .tech-chip .ico [class^="devicon"]{font-size:18px}
+  .tech-chip .ico svg{width:18px;height:18px;stroke:currentColor;display:block}
 
   /* ═══════════════════════════════════════
      PROJECTS
@@ -662,6 +669,8 @@
     font-size:15px;flex-shrink:0;
     transition:all var(--t) var(--ease);
   }
+  .c-icon svg{width:16px;height:16px;stroke:currentColor;display:block}
+  .c-icon svg:not(.lucide){fill:currentColor;stroke:none}
   .c-row:hover .c-icon{border-color:var(--g-bd);background:var(--g-bg)}
   .c-info{flex:1}
   .c-label{
@@ -799,21 +808,21 @@
         </p>
       </div>
       <div class="bc bc-loc rv d1">
-        <div class="bc-loc-ico">🏙️</div>
+        <div class="bc-loc-ico"><i data-lucide="map-pin"></i></div>
         <div class="bc-loc-name" data-es="Barcelona, España" data-en="Barcelona, Spain">Barcelona, España</div>
       </div>
       <div class="bc bc-stat rv d1">
-        <div class="bc-stat-ico">💼</div>
+        <div class="bc-stat-ico"><i data-lucide="briefcase"></i></div>
         <div class="bc-num" data-target="7">7+</div>
         <div class="bc-lbl" data-es="Años de experiencia" data-en="Years of experience">Años de experiencia</div>
       </div>
       <div class="bc bc-stat rv d2">
-        <div class="bc-stat-ico">🏢</div>
+        <div class="bc-stat-ico"><i data-lucide="building-2"></i></div>
         <div class="bc-num" data-target="8">8</div>
         <div class="bc-lbl" data-es="Empresas en 2 países" data-en="Companies in 2 countries">Empresas en 2 países</div>
       </div>
       <div class="bc bc-stat rv d3">
-        <div class="bc-stat-ico">⚡</div>
+        <div class="bc-stat-ico"><i data-lucide="zap"></i></div>
         <div class="bc-num" data-target="15">15+</div>
         <div class="bc-lbl" data-es="Tecnologías dominadas" data-en="Technologies mastered">Tecnologías dominadas</div>
       </div>
@@ -955,25 +964,25 @@
     <h2 class="sh rv" data-es="Educación &amp; certificaciones" data-en="Education &amp; certifications">Educación &amp; certificaciones</h2>
     <div class="edu-grid">
       <div class="edu-card rv">
-        <div class="edu-ico">🎓</div>
+        <div class="edu-ico"><i data-lucide="graduation-cap"></i></div>
         <h3 class="edu-deg" data-es="Tecnólogo en Análisis y Desarrollo de Sistemas de Información" data-en="Technologist in Information Systems Analysis &amp; Development">Tecnólogo en Análisis y Desarrollo de Sistemas de Información</h3>
         <p class="edu-school">SENA · Bogotá D.C.</p>
         <span class="edu-yr" data-es="2017 · Promedio 4.5" data-en="2017 · GPA 4.5">2017 · Promedio 4.5</span>
       </div>
       <div class="edu-card rv d1">
-        <div class="edu-ico">🌿</div>
+        <div class="edu-ico"><i data-lucide="git-branch"></i></div>
         <h3 class="edu-deg" data-es="Git Avanzado &amp; Principios SOLID" data-en="Advanced Git &amp; SOLID Principles">Git Avanzado &amp; Principios SOLID</h3>
         <p class="edu-school" data-es="Cursos online certificados" data-en="Certified online courses">Cursos online certificados</p>
         <span class="edu-yr" data-es="Formación continua" data-en="Continuous">Formación continua</span>
       </div>
       <div class="edu-card rv d2">
-        <div class="edu-ico">☕</div>
+        <div class="edu-ico"><i data-lucide="coffee"></i></div>
         <h3 class="edu-deg" data-es="POO en Java &amp; Bases de datos" data-en="OOP in Java &amp; Databases">POO en Java &amp; Bases de datos</h3>
         <p class="edu-school" data-es="Cursos online certificados" data-en="Certified online courses">Cursos online certificados</p>
         <span class="edu-yr" data-es="Formación continua" data-en="Continuous">Formación continua</span>
       </div>
       <div class="edu-card rv d3">
-        <div class="edu-ico">🔬</div>
+        <div class="edu-ico"><i data-lucide="shield-check"></i></div>
         <h3 class="edu-deg" data-es="Calidad del software &amp; Nuevas TIC" data-en="Software Quality &amp; New Technologies">Calidad del software &amp; Nuevas TIC</h3>
         <p class="edu-school" data-es="Cursos online certificados" data-en="Certified online courses">Cursos online certificados</p>
         <span class="edu-yr" data-es="Formación continua" data-en="Continuous">Formación continua</span>
@@ -997,14 +1006,14 @@
         <div class="sk-row"><div class="sk-hd"><span class="sk-name">Oracle / SQL / JPA / Hibernate</span><span class="sk-pct">83%</span></div><div class="sk-track"><div class="sk-fill" data-w=".83"></div></div></div>
         <div class="sk-row"><div class="sk-hd"><span class="sk-name">Node.js / Vue.js</span><span class="sk-pct">75%</span></div><div class="sk-track"><div class="sk-fill" data-w=".75"></div></div></div>
         <div class="tech-grid">
-          <div class="tech-chip"><span class="ico">☕</span>Java</div>
-          <div class="tech-chip"><span class="ico">🌿</span>Spring</div>
-          <div class="tech-chip"><span class="ico">🔵</span>Liferay</div>
-          <div class="tech-chip"><span class="ico">⚛️</span>React</div>
-          <div class="tech-chip"><span class="ico">🐳</span>Docker</div>
-          <div class="tech-chip"><span class="ico">🔧</span>Jenkins</div>
-          <div class="tech-chip"><span class="ico">🗄️</span>Oracle</div>
-          <div class="tech-chip"><span class="ico">🔎</span>Sonar</div>
+          <div class="tech-chip"><span class="ico"><i class="devicon-java-plain colored"></i></span>Java</div>
+          <div class="tech-chip"><span class="ico"><i class="devicon-spring-plain colored"></i></span>Spring</div>
+          <div class="tech-chip"><span class="ico"><i data-lucide="layers"></i></span>Liferay</div>
+          <div class="tech-chip"><span class="ico"><i class="devicon-react-original colored"></i></span>React</div>
+          <div class="tech-chip"><span class="ico"><i class="devicon-docker-plain colored"></i></span>Docker</div>
+          <div class="tech-chip"><span class="ico"><i class="devicon-jenkins-plain colored"></i></span>Jenkins</div>
+          <div class="tech-chip"><span class="ico"><i class="devicon-oracle-original colored"></i></span>Oracle</div>
+          <div class="tech-chip"><span class="ico"><i data-lucide="scan-search"></i></span>Sonar</div>
         </div>
       </div>
       <div class="rv d2">
@@ -1105,7 +1114,7 @@
       </div>
       <div class="c-list rv d2">
         <a href="mailto:egonzgar00@gmail.com" class="c-row">
-          <div class="c-icon">✉️</div>
+          <div class="c-icon"><i data-lucide="mail"></i></div>
           <div class="c-info">
             <div class="c-label">Email</div>
             <div class="c-val">egonzgar00@gmail.com</div>
@@ -1113,7 +1122,7 @@
           <span class="c-arr">↗</span>
         </a>
         <a href="https://www.linkedin.com/in/edgonzalez01/" target="_blank" rel="noopener" class="c-row">
-          <div class="c-icon">💼</div>
+          <div class="c-icon"><i data-lucide="linkedin"></i></div>
           <div class="c-info">
             <div class="c-label">LinkedIn</div>
             <div class="c-val">edgonzalez01</div>
@@ -1121,7 +1130,7 @@
           <span class="c-arr">↗</span>
         </a>
         <a href="tel:+34670084821" class="c-row">
-          <div class="c-icon">📱</div>
+          <div class="c-icon"><i data-lucide="phone"></i></div>
           <div class="c-info">
             <div class="c-label" data-es="Teléfono" data-en="Phone">Teléfono</div>
             <div class="c-val">+34 670 084 821</div>
@@ -1227,6 +1236,9 @@
       },{rootMargin:'-40% 0px -55% 0px'}).observe(s);
     });
   }
+
+  /* init lucide icons */
+  if(typeof lucide !== 'undefined') lucide.createIcons();
 </script>
 </body>
 </html>
